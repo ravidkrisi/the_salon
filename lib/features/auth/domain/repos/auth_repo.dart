@@ -6,7 +6,7 @@ abstract class AuthRepo {
   Future<User?> signInWithGoogle();
 
   // sign up new user
-  Future<UserEntity> signUpCustomer(
+  Future<void> signUpCustomer(
     String userId,
     String email,
     String name,

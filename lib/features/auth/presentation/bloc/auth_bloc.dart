@@ -78,13 +78,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   void _onSignUpUser(AuthSignUpUser event, Emitter<AuthState> emit) async {
     try {
       emit(AuthLoading());
-      final user = await repo.signUpCustomer(
+      await repo.signUpCustomer(
         event.userId,
         event.email,
         event.name,
         event.phoneNumber,
         event.profileImageUrl,
       );
+
+      final user = await repo.getCurrentUser();
+
+      if (user == null) {
+        emit(AuthUnauthenticated());
+        return;
+      }
 
       emit(AuthAuthenticated(user: user));
     } catch (e) {

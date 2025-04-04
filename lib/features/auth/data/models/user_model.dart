@@ -1,35 +1,56 @@
-// import 'package:the_salon/features/auth/domain/entities/user_entity.dart';
+import 'package:the_salon/features/auth/data/models/barber_model.dart';
+import 'package:the_salon/features/auth/data/models/customer_model.dart';
+import 'package:the_salon/features/auth/domain/entities/user_entity.dart';
 
-// class UserModel extends UserEntity {
-//   UserModel({required super.id, required super.name, required super.email, required super.profileImageUrl, required super.type});
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+class UserModel {
+  final String id;
+  final String name;
+  final String email;
+  final String profileImageUrl;
+  final UserType type;
+  UserModel({
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.profileImageUrl,
+    required this.type,
+  });
 
-//   factory UserEntity.fromMap(Map<String, dynamic> map) {
-//     final UserType type =
-//         (map['type'] == 'barber') ? UserType.barber : UserType.customer;
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'id': id,
+      'name': name,
+      'email': email,
+      'profile_image_url': profileImageUrl,
+      'type': type.toString(),
+    };
+  }
 
-//     // factory barber
-//     if (type == UserType.barber) {
-//       return Barber(
-//         id: map['id'],
-//         name: map['name'],
-//         email: map['email'],
-//         profileImageUrl: map['profile_image_url'],
-//         testType: 'hey',
-//       );
-//     }
-//     // factory customer
-//     else {
-//       return Customer(
-//         id: map['id'],
-//         name: map['name'],
-//         email: map['email'],
-//         profileImageUrl: map['profile_image_url'],
-//       );
-//     }
-//   }
+  factory UserModel.fromJson(Map<String, dynamic> map) {
+    final UserType type =
+        (map['type'] == UserType.barber.toString())
+            ? UserType.barber
+            : UserType.customer;
 
-//   String toJson() => json.encode(toMap());
-
-//   factory UserEntity.fromJson(String source) =>
-//       UserEntity.fromMap(json.decode(source) as Map<String, dynamic>);
-// }
+    // factory barber
+    if (type == UserType.barber) {
+      return BarberModel(
+        id: map['id'],
+        name: map['name'],
+        email: map['email'],
+        profileImageUrl: map['profileimage_url'],
+        testType: 'hey',
+      );
+    }
+    // factory customer
+    else {
+      return CustomerModel(
+        id: map['id'],
+        name: map['name'],
+        email: map['email'],
+        profileImageUrl: map['profile_image_url'],
+      );
+    }
+  }
+}
