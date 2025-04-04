@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:the_salon/core/theme/light_theme.dart';
 import 'package:the_salon/features/auth/data/datasources/firebase_auth_repo.dart';
 import 'package:the_salon/features/auth/presentation/pages/auth_page.dart';
 import 'package:the_salon/features/auth/presentation/pages/sign_up_page.dart';
@@ -23,9 +24,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'The Salon',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        ),
+        theme: lightTheme,
         home: BlocConsumer<AuthBloc, AuthState>(
           builder: (context, state) {
             // loading
