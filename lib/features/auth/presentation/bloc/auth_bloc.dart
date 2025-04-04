@@ -13,6 +13,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthSignInWithGoogle>(_onSignInWithGoogle);
     on<AuthCheckAuth>(_onCheckAuth);
     on<AuthLogout>(_onLogout);
+    on<AuthSignUpUser>(_onSignUpUser);
 
     // check auth when initial
     add(AuthCheckAuth());
@@ -31,7 +32,26 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (user == null) emit(AuthUnauthenticated());
 
       // sign in succeed
-      emit(AuthAuthenticated(user: user!));
+
+      // check if user exists in firestore
+      final userEntity = await repo.getCurrentUser();
+
+      // user first time
+      if (userEntity == null) {
+        emit(
+          AuthFirstTimeUser(
+            userId: user?.uid ?? '',
+            name: user?.displayName ?? '',
+            email: user?.email ?? '',
+            phoneNumber: user?.phoneNumber ?? '',
+            profileImageUrl: user?.photoURL ?? '',
+          ),
+        );
+      }
+      // user exists
+      else {
+        emit(AuthAuthenticated(user: userEntity));
+      }
     } catch (e) {
       emit(AuthErrors(message: e.toString()));
     }
@@ -43,10 +63,30 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final user = await repo.getCurrentUser();
 
       // user is not authenticated
-      if (user == null) emit(AuthUnauthenticated());
+      if (user == null) {
+        emit(AuthUnauthenticated());
+        return;
+      }
 
       // user is authenticated
-      emit(AuthAuthenticated(user: user!));
+      emit(AuthAuthenticated(user: user));
+    } catch (e) {
+      emit(AuthErrors(message: e.toString()));
+    }
+  }
+
+  void _onSignUpUser(AuthSignUpUser event, Emitter<AuthState> emit) async {
+    try {
+      emit(AuthLoading());
+      final user = await repo.signUpCustomer(
+        event.userId,
+        event.email,
+        event.name,
+        event.phoneNumber,
+        event.profileImageUrl,
+      );
+
+      emit(AuthAuthenticated(user: user));
     } catch (e) {
       emit(AuthErrors(message: e.toString()));
     }

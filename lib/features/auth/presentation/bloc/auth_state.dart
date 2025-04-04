@@ -1,5 +1,4 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:the_salon/features/auth/domain/entities/user_entity.dart';
 
 abstract class AuthState {}
 
@@ -11,8 +10,24 @@ class AuthLoading extends AuthState {}
 
 // Authenticated
 class AuthAuthenticated extends AuthState {
-  final User user;
+  final UserEntity user;
   AuthAuthenticated({required this.user});
+}
+
+// first time user
+class AuthFirstTimeUser extends AuthState {
+  final String userId;
+  final String name;
+  final String email;
+  final String phoneNumber;
+  final String profileImageUrl;
+  AuthFirstTimeUser({
+    required this.userId,
+    required this.name,
+    required this.email,
+    required this.phoneNumber,
+    required this.profileImageUrl,
+  });
 }
 
 // unauthenticated

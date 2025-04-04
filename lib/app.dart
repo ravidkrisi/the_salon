@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:the_salon/features/auth/data/firebase_auth_repo.dart';
+import 'package:the_salon/features/auth/data/datasources/firebase_auth_repo.dart';
 import 'package:the_salon/features/auth/presentation/pages/auth_page.dart';
+import 'package:the_salon/features/auth/presentation/pages/sign_up_page.dart';
 import 'package:the_salon/features/home/presentation/pages/home_page.dart';
 import 'package:the_salon/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:the_salon/features/auth/presentation/bloc/auth_state.dart';
@@ -37,6 +38,16 @@ class MyApp extends StatelessWidget {
               return HomePage();
             }
 
+            if (state is AuthFirstTimeUser) {
+              return SignUpPage(
+                userId: state.userId,
+                name: state.name,
+                email: state.email,
+                phoneNumber: state.phoneNumber,
+                profileImageUrl: state.profileImageUrl,
+              );
+            }
+
             // unauthenticated
             if (state is AuthUnauthenticated) {
               return AuthPage();
@@ -49,6 +60,7 @@ class MyApp extends StatelessWidget {
             print(state);
             // errors
             if (state is AuthErrors) {
+              print(state.message);
               ScaffoldMessenger.of(
                 context,
               ).showSnackBar(SnackBar(content: Text(state.message)));
