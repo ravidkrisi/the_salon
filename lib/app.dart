@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:the_salon/core/services/firebase_auth_service.dart';
-import 'package:the_salon/core/services/firestore_users_service.dart';
 import 'package:the_salon/core/theme/light_theme.dart';
 import 'package:the_salon/core/utils/service_locator.dart';
-import 'package:the_salon/features/auth/data/datasources/auth_remote_datasource.dart';
-import 'package:the_salon/features/auth/data/datasources/firebase_auth_repo.dart';
-import 'package:the_salon/features/auth/data/repos/auth_repo_impl.dart';
 import 'package:the_salon/features/auth/presentation/pages/auth_page.dart';
 import 'package:the_salon/features/auth/presentation/pages/sign_up_page.dart';
 import 'package:the_salon/features/home/presentation/pages/home_page.dart';
@@ -14,9 +9,6 @@ import 'package:the_salon/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:the_salon/features/auth/presentation/bloc/auth_state.dart';
 
 class MyApp extends StatelessWidget {
-  // auth firebase repo
-  final firebaseAuthRepo = FirebaseAuthRepo();
-
   MyApp({super.key});
 
   @override
