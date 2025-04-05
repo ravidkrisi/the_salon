@@ -4,6 +4,7 @@ import 'package:the_salon/core/services/firestore_users_service.dart';
 import 'package:the_salon/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:the_salon/features/auth/data/repos/auth_repo_impl.dart';
 import 'package:the_salon/features/auth/domain/repos/auth_repo.dart';
+import 'package:the_salon/features/auth/domain/usecases/sign_up_usecase.dart';
 import 'package:the_salon/features/auth/presentation/bloc/auth_bloc.dart';
 
 final GetIt getIt = GetIt.instance;
@@ -25,6 +26,13 @@ void setupLocator() {
     () => AuthRepoImpl(authRemoteDatasource: getIt()),
   );
 
+  // usecases
+  getIt.registerLazySingleton<SignUpUsecase>(
+    () => SignUpUsecase(authRepo: getIt()),
+  );
+
   // blocs
-  getIt.registerFactory<AuthBloc>(() => AuthBloc(repo: getIt()));
+  getIt.registerFactory<AuthBloc>(
+    () => AuthBloc(repo: getIt(), signUpUsecase: getIt()),
+  );
 }

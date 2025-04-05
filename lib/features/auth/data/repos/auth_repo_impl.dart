@@ -51,22 +51,10 @@ class AuthRepoImpl implements AuthRepo {
   }
 
   @override
-  Future<void> signUpCustomer(
-    String userId,
-    String email,
-    String name,
-    String phoneNumber,
-    String profileImageUrl,
-  ) async {
+  Future<void> signUpCustomer(UserEntity user) async {
     try {
       // create user model
-      final userModel = UserModel(
-        id: userId,
-        name: name,
-        email: email,
-        profileImageUrl: profileImageUrl,
-        type: UserType.customer,
-      );
+      final userModel = UserModel.fromEntity(user);
 
       await authRemoteDatasource.signUpUser(userModel);
     } catch (e) {

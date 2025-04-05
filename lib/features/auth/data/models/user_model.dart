@@ -1,5 +1,7 @@
 import 'package:the_salon/features/auth/data/models/barber_model.dart';
 import 'package:the_salon/features/auth/data/models/customer_model.dart';
+import 'package:the_salon/features/auth/domain/entities/barber.dart';
+import 'package:the_salon/features/auth/domain/entities/customer.dart';
 import 'package:the_salon/features/auth/domain/entities/user_entity.dart';
 
 // ignore_for_file: public_member_api_docs, sort_constructors_first
@@ -52,5 +54,35 @@ class UserModel {
         profileImageUrl: map['profile_image_url'],
       );
     }
+  }
+
+  factory UserModel.fromEntity(UserEntity user) {
+    // barber
+    if (user is Barber) {
+      return BarberModel(
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        profileImageUrl: user.profileImageUrl,
+        testType: user.testType,
+      );
+
+      // customer
+    } else if (user is Customer) {
+      return CustomerModel(
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        profileImageUrl: user.profileImageUrl,
+      );
+    }
+
+    return UserModel(
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      profileImageUrl: user.profileImageUrl,
+      type: user.type,
+    );
   }
 }

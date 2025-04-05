@@ -1,14 +1,18 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:the_salon/features/auth/domain/entities/user_entity.dart';
 
 import 'package:the_salon/features/auth/domain/repos/auth_repo.dart';
+import 'package:the_salon/features/auth/domain/usecases/sign_up_usecase.dart';
 import 'package:the_salon/features/auth/presentation/bloc/auth_event.dart';
 import 'package:the_salon/features/auth/presentation/bloc/auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepo repo;
+  final SignUpUsecase signUpUsecase;
 
-  AuthBloc({required this.repo}) : super(AuthInit()) {
+  AuthBloc({required this.repo, required this.signUpUsecase})
+    : super(AuthInit()) {
     // register handlers
     on<AuthSignInWithGoogle>(_onSignInWithGoogle);
     on<AuthCheckAuth>(_onCheckAuth);
@@ -78,15 +82,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   void _onSignUpUser(AuthSignUpUser event, Emitter<AuthState> emit) async {
     try {
       emit(AuthLoading());
-      await repo.signUpCustomer(
-        event.userId,
-        event.email,
-        event.name,
-        event.phoneNumber,
-        event.profileImageUrl,
-      );
 
-      final user = await repo.getCurrentUser();
+      final userEntity = UserEntity(
+        id: event.userId,
+        name: event.name,
+        email: event.email,
+        profileImageUrl: event.profileImageUrl,
+        type: UserType.customer,
+      );
+      final user = await signUpUsecase(userEntity);
 
       if (user == null) {
         emit(AuthUnauthenticated());
