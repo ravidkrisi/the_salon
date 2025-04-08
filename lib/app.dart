@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:the_salon/core/theme/light_theme.dart';
 import 'package:the_salon/core/utils/service_locator.dart';
+import 'package:the_salon/features/appointments/presentation/appointment_bloc.dart';
 import 'package:the_salon/features/auth/presentation/pages/auth_page.dart';
 import 'package:the_salon/features/auth/presentation/pages/sign_up_page.dart';
 import 'package:the_salon/features/home/presentation/pages/home_page.dart';
@@ -15,8 +16,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        // AUTH BLOC
+        // auth bloc
         BlocProvider(create: (context) => getIt<AuthBloc>()),
+
+        // appointment bloc
+        BlocProvider(create: (context) => getIt<AppointmentBloc>()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
