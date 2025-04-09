@@ -4,7 +4,7 @@ import 'package:the_salon/core/services/firestore_users_service.dart';
 import 'package:the_salon/features/appointments/data/datasources/appointment_remote_datasource.dart';
 import 'package:the_salon/features/appointments/data/repos/appointment_repo_impl.dart';
 import 'package:the_salon/features/appointments/domain/repos/appointment_repo.dart';
-import 'package:the_salon/features/appointments/presentation/appointment_bloc.dart';
+import 'package:the_salon/features/appointments/presentation/bloc/appointment_bloc.dart';
 import 'package:the_salon/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:the_salon/features/auth/data/repos/auth_repo_impl.dart';
 import 'package:the_salon/features/auth/domain/repos/auth_repo.dart';

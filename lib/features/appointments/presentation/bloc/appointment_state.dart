@@ -7,10 +7,33 @@ class AppointmentInit extends AppointmentState {}
 // loading
 class AppointmentLoading extends AppointmentState {}
 
+// // barber selected
+// class AppointmentBarberSelectedState extends AppointmentState {
+//   final String barberId;
+//   final List<String> availableSlots;
+//   AppointmentBarberSelectedState({
+//     required this.availableSlots,
+//     required this.barberId,
+//   });
+// }
+
+// // time selected
+// class AppointmentTimeSelectedState extends AppointmentState {
+//   final String barberId;
+//   final String time;
+//   AppointmentTimeSelectedState({required this.barberId, required this.time});
+// }
+
 // loaded
 class AppointmentLoaded extends AppointmentState {
+  final String barberId;
   final List<String> availableSlots;
-  AppointmentLoaded({required this.availableSlots});
+  final String? time;
+  AppointmentLoaded({
+    required this.availableSlots,
+    required this.barberId,
+    this.time,
+  });
 }
 
 // errors

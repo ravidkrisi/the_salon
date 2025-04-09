@@ -3,6 +3,18 @@ import 'package:the_salon/features/appointments/domain/entities/appointment.dart
 
 abstract class AppointmentEvent {}
 
+// barber selected
+class AppointmentBarberSelected extends AppointmentEvent {
+  final String barberId;
+  AppointmentBarberSelected({required this.barberId});
+}
+
+// time selected
+class AppointmentTimeSelected extends AppointmentEvent {
+  final String time;
+  AppointmentTimeSelected({required this.time});
+}
+
 // book appointment
 class AppointmentBookAppointment extends AppointmentEvent {
   final Appointment appointment;
