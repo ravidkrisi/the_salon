@@ -1,4 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:the_salon/features/auth/domain/entities/user_entity.dart';
+
 abstract class AppointmentState {}
 
 // init
@@ -26,12 +28,16 @@ class AppointmentLoading extends AppointmentState {}
 
 // loaded
 class AppointmentLoaded extends AppointmentState {
-  final String barberId;
+  final List<UserEntity> barbers;
+  final String? barberId;
+  final bool isTimeSlotsLoading;
   final List<String> availableSlots;
   final String? time;
   AppointmentLoaded({
-    required this.availableSlots,
-    required this.barberId,
+    required this.barbers,
+    this.barberId,
+    this.isTimeSlotsLoading = false,
+    this.availableSlots = const [],
     this.time,
   });
 }

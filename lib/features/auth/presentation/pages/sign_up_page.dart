@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:the_salon/core/extensions/buildcontext.dart';
+import 'package:the_salon/features/auth/domain/entities/user_entity.dart';
 import 'package:the_salon/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:the_salon/features/auth/presentation/bloc/auth_event.dart';
 import 'package:the_salon/features/auth/presentation/components/my_text_field.dart';
@@ -30,6 +31,8 @@ class _SignUpPageState extends State<SignUpPage> {
   late final TextEditingController nameTextController;
   late final TextEditingController emailTextController;
   late final TextEditingController phoneTextController;
+
+  UserType selectedType = UserType.customer;
 
   @override
   void initState() {
@@ -85,6 +88,23 @@ class _SignUpPageState extends State<SignUpPage> {
               ],
             ),
 
+            // user type
+            DropdownButton<UserType>(
+              items:
+                  UserType.values.map((type) {
+                    return DropdownMenuItem(
+                      value: type,
+                      child: Text(type.name),
+                    );
+                  }).toList(),
+              value: selectedType,
+              onChanged: (value) {
+                setState(() {
+                  selectedType = value ?? UserType.customer;
+                });
+              },
+            ),
+
             // submit btn
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -104,6 +124,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           name: nameTextController.text,
                           phoneNumber: phoneTextController.text,
                           profileImageUrl: widget.profileImageUrl,
+                          type: selectedType,
                         ),
                       );
                     },

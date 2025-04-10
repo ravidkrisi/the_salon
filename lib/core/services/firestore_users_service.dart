@@ -4,9 +4,12 @@ import 'package:the_salon/features/auth/data/models/user_model.dart';
 class FirestoreUsersService {
   final _usersCollection = FirebaseFirestore.instance.collection('users');
 
-  Future<void> addUserToFirestore(UserModel user) async {
+  Future<void> addUserToFirestore(
+    Map<String, dynamic> data,
+    String docId,
+  ) async {
     try {
-      await _usersCollection.doc(user.id).set(user.toMap());
+      await _usersCollection.doc(docId).set(data);
     } catch (e) {
       throw Exception('failed to add user to firestore');
     }
@@ -31,7 +34,7 @@ class FirestoreUsersService {
 
       return UserModel.fromJson(data);
     } catch (e) {
-      throw Exception('failed to fetch user from firestore');
+      throw Exception('failed to fetch user from firestore: $e');
     }
   }
 }

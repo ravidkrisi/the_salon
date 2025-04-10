@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:the_salon/features/appointments/domain/entities/appointment.dart';
-import 'package:the_salon/features/appointments/presentation/bloc/appointment_bloc.dart';
-import 'package:the_salon/features/appointments/presentation/bloc/appointment_event.dart';
 import 'package:the_salon/features/appointments/presentation/pages/book_appointment_page.dart';
 import 'package:the_salon/features/auth/domain/entities/user_entity.dart';
-import 'package:the_salon/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:the_salon/features/auth/presentation/bloc/auth_event.dart';
 
 class HomePage extends StatefulWidget {
   final UserEntity currUser;

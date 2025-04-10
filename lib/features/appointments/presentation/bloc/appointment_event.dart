@@ -3,6 +3,9 @@ import 'package:the_salon/features/appointments/domain/entities/appointment.dart
 
 abstract class AppointmentEvent {}
 
+// get all barbers
+class AppointmentGetAllBarbers extends AppointmentEvent {}
+
 // barber selected
 class AppointmentBarberSelected extends AppointmentEvent {
   final String barberId;

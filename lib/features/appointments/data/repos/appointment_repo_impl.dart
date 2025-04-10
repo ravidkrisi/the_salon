@@ -4,6 +4,7 @@ import 'package:the_salon/features/appointments/data/datasources/appointment_rem
 import 'package:the_salon/features/appointments/data/models/appointment_model.dart';
 import 'package:the_salon/features/appointments/domain/entities/appointment.dart';
 import 'package:the_salon/features/appointments/domain/repos/appointment_repo.dart';
+import 'package:the_salon/features/auth/domain/entities/user_entity.dart';
 
 class AppointmentRepoImpl implements AppointmentRepo {
   final AppointmentRemoteDatasource appointmentRemoteDatasource;
@@ -62,5 +63,11 @@ class AppointmentRepoImpl implements AppointmentRepo {
   // Helper method to normalize DateTime to start of the day (00:00:00)
   DateTime _normalizeDate(DateTime date) {
     return DateTime(date.year, date.month, date.day); // sets time to 00:00:00
+  }
+
+  @override
+  Future<List<UserEntity>> getAllBarbers() async {
+    final barbersModel = await appointmentRemoteDatasource.getAllBarbers();
+    return barbersModel.map((model) => UserEntity.fromModel(model)).toList();
   }
 }

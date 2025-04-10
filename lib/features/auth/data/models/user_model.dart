@@ -25,13 +25,13 @@ class UserModel {
       'name': name,
       'email': email,
       'profile_image_url': profileImageUrl,
-      'type': type.toString(),
+      'type': type.name,
     };
   }
 
   factory UserModel.fromJson(Map<String, dynamic> map) {
     final UserType type =
-        (map['type'] == UserType.barber.toString())
+        (map['type'] == UserType.barber.name)
             ? UserType.barber
             : UserType.customer;
 
@@ -41,8 +41,8 @@ class UserModel {
         id: map['id'],
         name: map['name'],
         email: map['email'],
-        profileImageUrl: map['profileimage_url'],
-        testType: 'hey',
+        profileImageUrl: map['profile_image_url'],
+        testType: map['test_type'] ?? '',
       );
     }
     // factory customer

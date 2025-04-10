@@ -11,4 +11,15 @@ class BarberModel extends UserModel {
     required super.profileImageUrl,
     required this.testType,
   }) : super(type: UserType.barber);
+
+  @override
+  Map<String, dynamic> toMap() {
+    final map = super.toMap();
+    map['test_type'] = testType;
+    return map;
+  }
+
+  Map<String, dynamic> toBaseMap() {
+    return super.toMap();
+  }
 }

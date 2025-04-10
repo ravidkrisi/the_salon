@@ -1,3 +1,5 @@
+import 'package:the_salon/features/auth/data/models/barber_model.dart';
+import 'package:the_salon/features/auth/data/models/user_model.dart';
 import 'package:the_salon/features/auth/domain/entities/barber.dart';
 import 'package:the_salon/features/auth/domain/entities/customer.dart';
 
@@ -16,6 +18,7 @@ class UserEntity {
     required this.type,
   });
 
+  // json function
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
@@ -51,6 +54,56 @@ class UserEntity {
         profileImageUrl: map['profile_image_url'],
       );
     }
+  }
+
+  // factory of barber / customer
+  factory UserEntity.create(
+    String id,
+    String name,
+    String email,
+    String profileImageUrl,
+    UserType type,
+  ) {
+    // barber
+    if (type == UserType.barber) {
+      return Barber(
+        id: id,
+        name: name,
+        email: email,
+        profileImageUrl: profileImageUrl,
+        testType: 'test',
+      );
+    }
+
+    // customer
+    return Customer(
+      id: id,
+      name: name,
+      email: email,
+      profileImageUrl: profileImageUrl,
+    );
+  }
+
+  // factory of model
+  factory UserEntity.fromModel(UserModel model) {
+    // barber
+    if (model is BarberModel) {
+      return Barber(
+        id: model.id,
+        name: model.name,
+        email: model.email,
+        profileImageUrl: model.profileImageUrl,
+        testType: model.testType,
+      );
+    }
+
+    // customer
+    return Customer(
+      id: model.id,
+      name: model.name,
+      email: model.email,
+      profileImageUrl: model.profileImageUrl,
+    );
   }
 }
 

@@ -83,12 +83,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       emit(AuthLoading());
 
-      final userEntity = UserEntity(
-        id: event.userId,
-        name: event.name,
-        email: event.email,
-        profileImageUrl: event.profileImageUrl,
-        type: UserType.customer,
+      //
+      if (event.type == UserType.barber) {}
+
+      final userEntity = UserEntity.create(
+        event.userId,
+        event.name,
+        event.email,
+        event.profileImageUrl,
+        event.type,
       );
       final user = await signUpUsecase(userEntity);
 

@@ -7,10 +7,28 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
   final AppointmentRepo repo;
 
   AppointmentBloc({required this.repo}) : super(AppointmentInit()) {
+    // register handlers
     on<AppointmentBookAppointment>(_onBookAppointment);
-    // on<AppointmentGetAvailableSlots>(_onGetAvailableSlots);
     on<AppointmentBarberSelected>(_onBarberSelected);
     on<AppointmentTimeSelected>(_onTimeSelected);
+    on<AppointmentGetAllBarbers>(_onGetAllBarbers);
+
+    // get all barbers when init
+    add(AppointmentGetAllBarbers());
+  }
+
+  Future<void> _onGetAllBarbers(
+    AppointmentGetAllBarbers event,
+    Emitter<AppointmentState> emit,
+  ) async {
+    try {
+      emit(AppointmentLoading());
+
+      final barbers = await repo.getAllBarbers();
+      emit(AppointmentLoaded(barbers: barbers));
+    } catch (e) {
+      emit(AppointmentErrors(message: e.toString()));
+    }
   }
 
   Future<void> _onBarberSelected(
@@ -18,16 +36,30 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
     Emitter<AppointmentState> emit,
   ) async {
     try {
-      emit(AppointmentLoading());
-      final availableSlots = await repo.getAvailableSlotsByBarberId(
-        event.barberId,
-      );
-      emit(
-        AppointmentLoaded(
-          availableSlots: availableSlots,
-          barberId: event.barberId,
-        ),
-      );
+      // show loading for time slots
+      final currState = state;
+      if (currState is AppointmentLoaded) {
+        emit(
+          AppointmentLoaded(
+            barbers: currState.barbers,
+            barberId: event.barberId,
+            isTimeSlotsLoading: true,
+          ),
+        );
+
+        // get available time slots
+        final availableSlots = await repo.getAvailableSlotsByBarberId(
+          event.barberId,
+        );
+
+        emit(
+          AppointmentLoaded(
+            barbers: currState.barbers,
+            barberId: event.barberId,
+            availableSlots: availableSlots,
+          ),
+        );
+      }
     } catch (e) {
       emit(AppointmentErrors(message: e.toString()));
     }
@@ -41,6 +73,7 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
     if (currState is AppointmentLoaded) {
       emit(
         AppointmentLoaded(
+          barbers: currState.barbers,
           availableSlots: currState.availableSlots,
           barberId: currState.barberId,
           time: event.time,
@@ -54,26 +87,12 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
     Emitter<AppointmentState> emit,
   ) async {
     try {
+      emit(AppointmentLoading());
       await repo.bookAppointment(event.appointment);
+      emit(AppointmentInit());
+      add(AppointmentGetAllBarbers());
     } catch (e) {
       emit(AppointmentErrors(message: e.toString()));
     }
   }
-
-  // Future<void> _onGetAvailableSlots(
-  //   AppointmentGetAvailableSlots event,
-  //   Emitter<AppointmentState> emit,
-  // ) async {
-  //   try {
-  //     emit(AppointmentLoading());
-
-  //     final availableSlots = await repo.getAvailableSlotsByBarberId(
-  //       event.barberId,
-  //     );
-
-  //     emit(AppointmentLoaded(availableSlots: availableSlots));
-  //   } catch (e) {
-  //     emit(AppointmentErrors(message: e.toString()));
-  //   }
-  // }
 }

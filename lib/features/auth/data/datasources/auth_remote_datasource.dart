@@ -1,8 +1,11 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:the_salon/core/services/firebase_auth_service.dart';
+import 'package:the_salon/core/services/firestore_barbers_service.dart';
 import 'package:the_salon/core/services/firestore_users_service.dart';
+import 'package:the_salon/features/auth/data/models/barber_model.dart';
 import 'package:the_salon/features/auth/data/models/user_model.dart';
+import 'package:the_salon/features/auth/domain/entities/user_entity.dart';
 
 abstract class AuthRemoteDatasource {
   // sign in with google
@@ -18,9 +21,11 @@ abstract class AuthRemoteDatasource {
 class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   final FirebaseAuthService authService;
   final FirestoreUsersService usersService;
+  final FirestoreBarbersService barbersService;
   AuthRemoteDatasourceImpl({
     required this.authService,
     required this.usersService,
+    required this.barbersService,
   });
   @override
   Future<UserModel?> getCurrentUser() async {
@@ -62,7 +67,13 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   @override
   Future<void> signUpUser(UserModel user) async {
     try {
-      await usersService.addUserToFirestore(user);
+      if (user is BarberModel) {
+        await usersService.addUserToFirestore(user.toBaseMap(), user.id);
+        await barbersService.addBarberToFirestore(user.toMap(), user.id);
+        return;
+      }
+
+      await usersService.addUserToFirestore(user.toMap(), user.id);
     } catch (e) {
       rethrow;
     }

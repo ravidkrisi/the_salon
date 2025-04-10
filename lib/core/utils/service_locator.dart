@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:the_salon/core/services/firebase_auth_service.dart';
+import 'package:the_salon/core/services/firestore_barbers_service.dart';
 import 'package:the_salon/core/services/firestore_users_service.dart';
 import 'package:the_salon/features/appointments/data/datasources/appointment_remote_datasource.dart';
 import 'package:the_salon/features/appointments/data/repos/appointment_repo_impl.dart';
@@ -19,10 +20,17 @@ void setupLocator() {
     () => FirestoreUsersService(),
   );
   getIt.registerLazySingleton<FirebaseAuthService>(() => FirebaseAuthService());
+  getIt.registerLazySingleton<FirestoreBarbersService>(
+    () => FirestoreBarbersService(),
+  );
 
   // datasources
   getIt.registerLazySingleton<AuthRemoteDatasource>(
-    () => AuthRemoteDatasourceImpl(authService: getIt(), usersService: getIt()),
+    () => AuthRemoteDatasourceImpl(
+      authService: getIt(),
+      usersService: getIt(),
+      barbersService: getIt(),
+    ),
   );
   getIt.registerLazySingleton<AppointmentRemoteDatasource>(
     () => AppointmentRemoteDatasourceImpl(),
