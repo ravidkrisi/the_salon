@@ -30,12 +30,18 @@ class AppointmentLoading extends AppointmentState {}
 class AppointmentLoaded extends AppointmentState {
   final List<UserEntity> barbers;
   final String? barberId;
+  final bool isDateLoading;
+  final List<DateTime> upcomingDates;
+  final DateTime? date;
   final bool isTimeSlotsLoading;
   final List<String> availableSlots;
   final String? time;
   AppointmentLoaded({
     required this.barbers,
     this.barberId,
+    this.isDateLoading = false,
+    this.upcomingDates = const [],
+    this.date,
     this.isTimeSlotsLoading = false,
     this.availableSlots = const [],
     this.time,

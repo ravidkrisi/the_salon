@@ -5,7 +5,12 @@ abstract class AppointmentRepo {
   // create new appointment
   Future<void> bookAppointment(Appointment appointment);
   // get all apointments by barber id
-  Future<List<String>> getAvailableSlotsByBarberId(String barberId);
+  Future<List<String>> getAvailableSlotsByBarberId(
+    String barberId,
+    DateTime startDate,
+  );
   // get all barbers
   Future<List<UserEntity>> getAllBarbers();
+  // get upcoming dates
+  List<DateTime> getUpcomingDates();
 }

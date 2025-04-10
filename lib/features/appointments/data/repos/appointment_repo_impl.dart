@@ -21,13 +21,14 @@ class AppointmentRepoImpl implements AppointmentRepo {
   }
 
   @override
-  Future<List<String>> getAvailableSlotsByBarberId(String barberId) async {
+  Future<List<String>> getAvailableSlotsByBarberId(
+    String barberId,
+    DateTime date,
+  ) async {
     // set dates range
 
-    final normalizeStartDate = _normalizeDate(DateTime.now());
-    final normalizeEndDate = _normalizeDate(
-      DateTime.now().add(Duration(days: 1)),
-    );
+    final normalizeStartDate = _normalizeDate(date);
+    final normalizeEndDate = _normalizeDate(date.add(Duration(days: 1)));
 
     final startDate = Timestamp.fromDate(normalizeStartDate);
     final endDate = Timestamp.fromDate(normalizeEndDate);
@@ -69,5 +70,16 @@ class AppointmentRepoImpl implements AppointmentRepo {
   Future<List<UserEntity>> getAllBarbers() async {
     final barbersModel = await appointmentRemoteDatasource.getAllBarbers();
     return barbersModel.map((model) => UserEntity.fromModel(model)).toList();
+  }
+
+  @override
+  List<DateTime> getUpcomingDates() {
+    List<DateTime> dates = [];
+    DateTime today = DateTime.now();
+    for (int i = 0; i < 5; i++) {
+      DateTime date = today.add(Duration(days: i));
+      dates.add(date); // Store DateTime object
+    }
+    return dates;
   }
 }

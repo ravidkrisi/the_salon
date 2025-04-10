@@ -12,6 +12,12 @@ class AppointmentBarberSelected extends AppointmentEvent {
   AppointmentBarberSelected({required this.barberId});
 }
 
+// date selected
+class AppointmentDateSelected extends AppointmentEvent {
+  final DateTime date;
+  AppointmentDateSelected({required this.date});
+}
+
 // time selected
 class AppointmentTimeSelected extends AppointmentEvent {
   final String time;

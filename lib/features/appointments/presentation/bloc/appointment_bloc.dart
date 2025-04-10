@@ -12,6 +12,7 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
     on<AppointmentBarberSelected>(_onBarberSelected);
     on<AppointmentTimeSelected>(_onTimeSelected);
     on<AppointmentGetAllBarbers>(_onGetAllBarbers);
+    on<AppointmentDateSelected>(_onDateSelected);
 
     // get all barbers when init
     add(AppointmentGetAllBarbers());
@@ -31,6 +32,45 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
     }
   }
 
+  Future<void> _onDateSelected(
+    AppointmentDateSelected event,
+    Emitter<AppointmentState> emit,
+  ) async {
+    try {
+      // show loading for time slots
+      final currState = state;
+      if (currState is AppointmentLoaded) {
+        emit(
+          AppointmentLoaded(
+            barbers: currState.barbers,
+            barberId: currState.barberId,
+            date: event.date,
+            upcomingDates: currState.upcomingDates,
+            isTimeSlotsLoading: true,
+          ),
+        );
+
+        // get available time slots
+        final availableSlots = await repo.getAvailableSlotsByBarberId(
+          currState.barberId!,
+          event.date,
+        );
+
+        emit(
+          AppointmentLoaded(
+            barbers: currState.barbers,
+            barberId: currState.barberId,
+            date: event.date,
+            upcomingDates: currState.upcomingDates,
+            availableSlots: availableSlots,
+          ),
+        );
+      }
+    } catch (e) {
+      emit(AppointmentErrors(message: e.toString()));
+    }
+  }
+
   Future<void> _onBarberSelected(
     AppointmentBarberSelected event,
     Emitter<AppointmentState> emit,
@@ -43,20 +83,18 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
           AppointmentLoaded(
             barbers: currState.barbers,
             barberId: event.barberId,
-            isTimeSlotsLoading: true,
+            isDateLoading: true,
           ),
         );
 
         // get available time slots
-        final availableSlots = await repo.getAvailableSlotsByBarberId(
-          event.barberId,
-        );
+        final upcomingDates = await repo.getUpcomingDates();
 
         emit(
           AppointmentLoaded(
             barbers: currState.barbers,
             barberId: event.barberId,
-            availableSlots: availableSlots,
+            upcomingDates: upcomingDates,
           ),
         );
       }
@@ -76,6 +114,8 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
           barbers: currState.barbers,
           availableSlots: currState.availableSlots,
           barberId: currState.barberId,
+          upcomingDates: currState.upcomingDates,
+          date: currState.date,
           time: event.time,
         ),
       );

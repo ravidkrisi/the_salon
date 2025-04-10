@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:the_salon/features/appointments/domain/entities/appointment.dart';
 import 'package:the_salon/features/appointments/presentation/bloc/appointment_bloc.dart';
 import 'package:the_salon/features/appointments/presentation/bloc/appointment_event.dart';
@@ -51,7 +52,68 @@ class BookAppointmentPage extends StatelessWidget {
                         },
                       ),
 
+                      // barber selected -> show dates
                       if (state.barberId != null)
+                        if (state.isDateLoading)
+                          Center(child: CircularProgressIndicator())
+                        else
+                          // date slots
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(height: 25),
+                              Text('Select Date', style: titleStyle),
+                              SizedBox(height: 10),
+                              OptionsList(
+                                options:
+                                    state.upcomingDates
+                                        .map(
+                                          (date) =>
+                                              DateFormat('dd/MM').format(date),
+                                        )
+                                        .toList() +
+                                    ['Other'],
+                                onTap: (selected) {
+                                  if (selected == 'Other') {
+                                    // Open calendar for custom date selection
+                                    showDatePicker(
+                                      context: context,
+                                      initialDate: DateTime.now(),
+                                      firstDate: DateTime.now(),
+                                      lastDate: DateTime.now().add(
+                                        Duration(days: 365),
+                                      ),
+                                    ).then((pickedDate) {
+                                      if (pickedDate != null) {
+                                        context.read<AppointmentBloc>().add(
+                                          AppointmentDateSelected(
+                                            date: pickedDate,
+                                          ),
+                                        );
+                                      }
+                                    });
+                                  } else {
+                                    // Get the DateTime object for the selected date
+                                    final selectedDate = state.upcomingDates
+                                        .firstWhere(
+                                          (date) =>
+                                              DateFormat(
+                                                'dd/MM',
+                                              ).format(date) ==
+                                              selected,
+                                        );
+                                    context.read<AppointmentBloc>().add(
+                                      AppointmentDateSelected(
+                                        date: selectedDate,
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+
+                      if (state.date != null)
                         if (state.isTimeSlotsLoading)
                           Center(child: CircularProgressIndicator())
                         else
