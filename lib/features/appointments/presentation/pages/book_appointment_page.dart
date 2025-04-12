@@ -144,9 +144,9 @@ class BookAppointmentPage extends StatelessWidget {
                                 final appointment = Appointment(
                                   id: Uuid().v4(),
                                   customerId: currUser.id,
-                                  barberId: state.barberId ?? '',
-                                  date: DateTime.now(),
-                                  time: state.time ?? '',
+                                  barberId: state.barberId!,
+                                  date: state.date!,
+                                  time: state.time!,
                                   status: AppointmentStatus.booked,
                                 );
                                 context.read<AppointmentBloc>().add(
