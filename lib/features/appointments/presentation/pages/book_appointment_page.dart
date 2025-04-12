@@ -37,20 +37,7 @@ class BookAppointmentPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // select barber
-                      Text('Select Barber', style: titleStyle),
-                      SizedBox(height: 10),
-                      OptionsList(
-                        options:
-                            state.barbers.map((barber) => barber.name).toList(),
-                        onTap: (selected) {
-                          final barber = state.barbers.firstWhere(
-                            (barber) => barber.name == selected,
-                          );
-                          context.read<AppointmentBloc>().add(
-                            AppointmentBarberSelected(barberId: barber.id),
-                          );
-                        },
-                      ),
+                      barberSection(titleStyle, state, context),
 
                       // barber selected -> show dates
                       if (state.barberId != null)
@@ -58,107 +45,16 @@ class BookAppointmentPage extends StatelessWidget {
                           Center(child: CircularProgressIndicator())
                         else
                           // date slots
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(height: 25),
-                              Text('Select Date', style: titleStyle),
-                              SizedBox(height: 10),
-                              OptionsList(
-                                options:
-                                    state.upcomingDates
-                                        .map(
-                                          (date) =>
-                                              DateFormat('dd/MM').format(date),
-                                        )
-                                        .toList() +
-                                    ['Other'],
-                                onTap: (selected) {
-                                  if (selected == 'Other') {
-                                    // Open calendar for custom date selection
-                                    showDatePicker(
-                                      context: context,
-                                      initialDate: DateTime.now(),
-                                      firstDate: DateTime.now(),
-                                      lastDate: DateTime.now().add(
-                                        Duration(days: 365),
-                                      ),
-                                    ).then((pickedDate) {
-                                      if (pickedDate != null) {
-                                        context.read<AppointmentBloc>().add(
-                                          AppointmentDateSelected(
-                                            date: pickedDate,
-                                          ),
-                                        );
-                                      }
-                                    });
-                                  } else {
-                                    // Get the DateTime object for the selected date
-                                    final selectedDate = state.upcomingDates
-                                        .firstWhere(
-                                          (date) =>
-                                              DateFormat(
-                                                'dd/MM',
-                                              ).format(date) ==
-                                              selected,
-                                        );
-                                    context.read<AppointmentBloc>().add(
-                                      AppointmentDateSelected(
-                                        date: selectedDate,
-                                      ),
-                                    );
-                                  }
-                                },
-                              ),
-                            ],
-                          ),
+                          dateSection(titleStyle, state, context),
 
                       if (state.date != null)
                         if (state.isTimeSlotsLoading)
                           Center(child: CircularProgressIndicator())
                         else
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(height: 25),
-                              Text('Select Time', style: titleStyle),
-                              SizedBox(height: 10),
-                              OptionsList(
-                                options: state.availableSlots,
-                                onTap: (selected) {
-                                  context.read<AppointmentBloc>().add(
-                                    AppointmentTimeSelected(time: selected),
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
+                          timeSection(titleStyle, state, context),
 
                       // book btn
-                      if (state.time != null)
-                        Column(
-                          children: [
-                            SizedBox(height: 25, width: double.infinity),
-                            ElevatedButton(
-                              onPressed: () {
-                                final appointment = Appointment(
-                                  id: Uuid().v4(),
-                                  customerId: currUser.id,
-                                  barberId: state.barberId!,
-                                  date: state.date!,
-                                  time: state.time!,
-                                  status: AppointmentStatus.booked,
-                                );
-                                context.read<AppointmentBloc>().add(
-                                  AppointmentBookAppointment(
-                                    appointment: appointment,
-                                  ),
-                                );
-                              },
-                              child: Text('Book'),
-                            ),
-                          ],
-                        ),
+                      if (state.time != null) bookButton(state, context),
                     ],
                   );
                 }
@@ -177,6 +73,124 @@ class BookAppointmentPage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Column bookButton(AppointmentLoaded state, BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(height: 25, width: double.infinity),
+        ElevatedButton(
+          onPressed: () {
+            final appointment = Appointment(
+              id: Uuid().v4(),
+              customerId: currUser.id,
+              barberId: state.barberId!,
+              date: state.date!,
+              time: state.time!,
+              status: AppointmentStatus.booked,
+            );
+            context.read<AppointmentBloc>().add(
+              AppointmentBookAppointment(appointment: appointment),
+            );
+          },
+          child: Text('Book'),
+        ),
+      ],
+    );
+  }
+
+  Column timeSection(
+    TextStyle titleStyle,
+    AppointmentLoaded state,
+    BuildContext context,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: 25),
+        Text('Select Time', style: titleStyle),
+        SizedBox(height: 10),
+        OptionsList(
+          options: state.availableSlots,
+          onTap: (selected) {
+            context.read<AppointmentBloc>().add(
+              AppointmentTimeSelected(time: selected),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Column dateSection(
+    TextStyle titleStyle,
+    AppointmentLoaded state,
+    BuildContext context,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: 25),
+        Text('Select Date', style: titleStyle),
+        SizedBox(height: 10),
+        OptionsList(
+          options:
+              state.upcomingDates
+                  .map((date) => DateFormat('dd/MM').format(date))
+                  .toList() +
+              ['Other'],
+          onTap: (selected) {
+            if (selected == 'Other') {
+              // Open calendar for custom date selection
+              showDatePicker(
+                context: context,
+                initialDate: DateTime.now(),
+                firstDate: DateTime.now(),
+                lastDate: DateTime.now().add(Duration(days: 365)),
+              ).then((pickedDate) {
+                if (pickedDate != null) {
+                  context.read<AppointmentBloc>().add(
+                    AppointmentDateSelected(date: pickedDate),
+                  );
+                }
+              });
+            } else {
+              // Get the DateTime object for the selected date
+              final selectedDate = state.upcomingDates.firstWhere(
+                (date) => DateFormat('dd/MM').format(date) == selected,
+              );
+              context.read<AppointmentBloc>().add(
+                AppointmentDateSelected(date: selectedDate),
+              );
+            }
+          },
+        ),
+      ],
+    );
+  }
+
+  Column barberSection(
+    TextStyle titleStyle,
+    AppointmentLoaded state,
+    BuildContext context,
+  ) {
+    return Column(
+      children: [
+        Text('Select Barber', style: titleStyle),
+        SizedBox(height: 10),
+        OptionsList(
+          options: state.barbers.map((barber) => barber.name).toList(),
+          onTap: (selected) {
+            final barber = state.barbers.firstWhere(
+              (barber) => barber.name == selected,
+            );
+            context.read<AppointmentBloc>().add(
+              AppointmentBarberSelected(barberId: barber.id),
+            );
+          },
+        ),
+      ],
     );
   }
 }

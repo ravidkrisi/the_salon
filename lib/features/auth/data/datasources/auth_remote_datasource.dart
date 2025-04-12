@@ -5,7 +5,6 @@ import 'package:the_salon/core/services/firestore_barbers_service.dart';
 import 'package:the_salon/core/services/firestore_users_service.dart';
 import 'package:the_salon/features/auth/data/models/barber_model.dart';
 import 'package:the_salon/features/auth/data/models/user_model.dart';
-import 'package:the_salon/features/auth/domain/entities/user_entity.dart';
 
 abstract class AuthRemoteDatasource {
   // sign in with google
