@@ -10,7 +10,7 @@ class ImagePickerService {
     if (pickedFile != null) {
       return File(pickedFile.path);
     } else {
-      throw Exception("No image selected");
+      return null;
     }
   }
 }

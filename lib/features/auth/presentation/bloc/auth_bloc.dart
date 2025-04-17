@@ -37,16 +37,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         // pick an image
         final file = await getIt<ImagePickerService>().pickImage();
 
-        emit(
-          AuthFirstTimeUser(
-            userId: currState.userId,
-            name: currState.name,
-            email: currState.email,
-            phoneNumber: currState.phoneNumber,
-            profileImageUrl: currState.profileImageUrl,
-            imageFile: file,
-          ),
-        );
+        if (file != null) {
+          emit(
+            AuthFirstTimeUser(
+              userId: currState.userId,
+              name: currState.name,
+              email: currState.email,
+              phoneNumber: currState.phoneNumber,
+              profileImageUrl: currState.profileImageUrl,
+              imageFile: file,
+            ),
+          );
+        }
       }
     } catch (e) {
       emit(AuthErrors(message: e.toString()));

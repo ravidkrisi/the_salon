@@ -66,7 +66,7 @@ class AuthRepoImpl implements AuthRepo {
 
   @override
   Future<String> saveProfileImage(File file, String userId) async {
-    final path = '$userId/images/profile_image.jpg';
+    final path = 'users/$userId/images/profile_image.jpg';
     final downloadUrl = authRemoteDatasource.saveProfileImageToStorage(
       file,
       path,

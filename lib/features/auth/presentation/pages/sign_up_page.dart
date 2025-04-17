@@ -5,6 +5,7 @@ import 'package:the_salon/core/extensions/buildcontext.dart';
 import 'package:the_salon/features/auth/domain/entities/user_entity.dart';
 import 'package:the_salon/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:the_salon/features/auth/presentation/bloc/auth_event.dart';
+import 'package:the_salon/features/auth/presentation/bloc/auth_state.dart';
 import 'package:the_salon/features/auth/presentation/components/my_text_field.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -60,99 +61,132 @@ class _SignUpPageState extends State<SignUpPage> {
       appBar: AppBar(title: Text('Welcome')),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            // profile image
-            TextButton(
-              onPressed:
-                  () => context.read<AuthBloc>().add(AuthSelectProfileImage()),
-              child: Text('select a profile image'),
-            ),
-            // name text field
-            MyTextField(
-              label: 'Name',
-              hintText: 'Jhon Doe',
-              controller: nameTextController,
-            ),
-
-            // email text field
-            MyTextField(
-              label: 'Email',
-              hintText: 'Jhon@example.com',
-              controller: emailTextController,
-            ),
-
-            // phone number text field
-            MyTextField(
-              label: 'Phone Number',
-              hintText: '+972536331210',
-              controller: phoneTextController,
-              keyboardType: TextInputType.phone,
-              formatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                LengthLimitingTextInputFormatter(13),
-              ],
-            ),
-
-            // user type
-            DropdownButton<UserType>(
-              items:
-                  UserType.values.map((type) {
-                    return DropdownMenuItem(
-                      value: type,
-                      child: Text(type.name),
-                    );
-                  }).toList(),
-              value: selectedType,
-              onChanged: (value) {
-                setState(() {
-                  selectedType = value ?? UserType.customer;
-                });
-              },
-            ),
-
-            // submit btn
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                SizedBox(
-                  width: 120,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: context.colorScheme.primary,
-                      foregroundColor: context.colorScheme.onPrimary,
-                    ),
-                    onPressed: () {
-                      context.read<AuthBloc>().add(
-                        AuthSignUpUser(
-                          userId: widget.userId,
-                          email: emailTextController.text,
-                          name: nameTextController.text,
-                          phoneNumber: phoneTextController.text,
-                          profileImageUrl: widget.profileImageUrl,
-                          type: selectedType,
-                        ),
-                      );
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Done',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+        child: BlocConsumer<AuthBloc, AuthState>(
+          builder: (context, state) {
+            // authFirstTimeUser
+            if (state is AuthFirstTimeUser) {
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    // profile image
+                    state.imageFile == null
+                        ?
+                        // select image
+                        TextButton(
+                          onPressed:
+                              () => context.read<AuthBloc>().add(
+                                AuthSelectProfileImage(),
+                              ),
+                          child: Text('select a profile image'),
+                        )
+                        :
+                        // image selected
+                        GestureDetector(
+                          onTap:
+                              () => context.read<AuthBloc>().add(
+                                AuthSelectProfileImage(),
+                              ),
+                          child: CircleAvatar(
+                            key: ValueKey(state.imageFile!.path),
+                            backgroundImage: FileImage(state.imageFile!),
+                            radius: 75,
                           ),
                         ),
 
-                        Icon(Icons.chevron_right, size: 24),
+                    SizedBox(height: 10),
+
+                    // name text field
+                    MyTextField(
+                      label: 'Name',
+                      hintText: 'Jhon Doe',
+                      controller: nameTextController,
+                    ),
+
+                    // email text field
+                    MyTextField(
+                      label: 'Email',
+                      hintText: 'Jhon@example.com',
+                      controller: emailTextController,
+                    ),
+
+                    // phone number text field
+                    MyTextField(
+                      label: 'Phone Number',
+                      hintText: '+972536331210',
+                      controller: phoneTextController,
+                      keyboardType: TextInputType.phone,
+                      formatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(13),
                       ],
                     ),
-                  ),
+
+                    // user type
+                    DropdownButton<UserType>(
+                      items:
+                          UserType.values.map((type) {
+                            return DropdownMenuItem(
+                              value: type,
+                              child: Text(type.name),
+                            );
+                          }).toList(),
+                      value: selectedType,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedType = value ?? UserType.customer;
+                        });
+                      },
+                    ),
+
+                    // submit btn
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        SizedBox(
+                          width: 120,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: context.colorScheme.primary,
+                              foregroundColor: context.colorScheme.onPrimary,
+                            ),
+                            onPressed: () {
+                              context.read<AuthBloc>().add(
+                                AuthSignUpUser(
+                                  userId: widget.userId,
+                                  email: emailTextController.text,
+                                  name: nameTextController.text,
+                                  phoneNumber: phoneTextController.text,
+                                  profileImageUrl: widget.profileImageUrl,
+                                  type: selectedType,
+                                ),
+                              );
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Done',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+
+                                Icon(Icons.chevron_right, size: 24),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ],
+              );
+            }
+            // default
+            return Container();
+          },
+          listener: (context, state) {},
         ),
       ),
     );
