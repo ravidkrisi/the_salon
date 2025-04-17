@@ -1,6 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:the_salon/core/services/firebase_auth_service.dart';
+import 'package:the_salon/core/services/firebase_storage_service.dart';
 import 'package:the_salon/core/services/firestore_barbers_service.dart';
 import 'package:the_salon/core/services/firestore_users_service.dart';
 import 'package:the_salon/features/auth/data/models/barber_model.dart';
@@ -15,16 +18,20 @@ abstract class AuthRemoteDatasource {
   Future<void> logout();
   // create user first time
   Future<void> signUpUser(UserModel user);
+  // save profile image to storage
+  Future<String> saveProfileImageToStorage(File file, String path);
 }
 
 class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   final FirebaseAuthService authService;
   final FirestoreUsersService usersService;
   final FirestoreBarbersService barbersService;
+  final FirebaseStorageService storageService;
   AuthRemoteDatasourceImpl({
     required this.authService,
     required this.usersService,
     required this.barbersService,
+    required this.storageService,
   });
   @override
   Future<UserModel?> getCurrentUser() async {
@@ -76,5 +83,12 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
     } catch (e) {
       rethrow;
     }
+  }
+
+  @override
+  Future<String> saveProfileImageToStorage(File file, String path) async {
+    final downloadUrl = await storageService.uploadFile(path, file);
+
+    return downloadUrl;
   }
 }

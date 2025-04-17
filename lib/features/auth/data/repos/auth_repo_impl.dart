@@ -1,5 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:the_salon/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:the_salon/features/auth/data/models/user_model.dart';
@@ -60,5 +62,15 @@ class AuthRepoImpl implements AuthRepo {
     } catch (e) {
       rethrow;
     }
+  }
+
+  @override
+  Future<String> saveProfileImage(File file, String userId) async {
+    final path = '$userId/images/profile_image.jpg';
+    final downloadUrl = authRemoteDatasource.saveProfileImageToStorage(
+      file,
+      path,
+    );
+    return downloadUrl;
   }
 }

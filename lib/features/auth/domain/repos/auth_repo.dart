@@ -1,9 +1,14 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:the_salon/features/auth/domain/entities/user_entity.dart';
 
 abstract class AuthRepo {
   // sign in with google
   Future<User?> signInWithGoogle();
+
+  // save profile image
+  Future<String> saveProfileImage(File file, String userId);
 
   // sign up new user
   Future<void> signUpCustomer(UserEntity user);

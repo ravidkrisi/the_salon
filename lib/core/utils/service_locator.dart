@@ -1,7 +1,9 @@
 import 'package:get_it/get_it.dart';
 import 'package:the_salon/core/services/firebase_auth_service.dart';
+import 'package:the_salon/core/services/firebase_storage_service.dart';
 import 'package:the_salon/core/services/firestore_barbers_service.dart';
 import 'package:the_salon/core/services/firestore_users_service.dart';
+import 'package:the_salon/core/services/image_picker_service.dart';
 import 'package:the_salon/features/appointments/data/datasources/appointment_remote_datasource.dart';
 import 'package:the_salon/features/appointments/data/repos/appointment_repo_impl.dart';
 import 'package:the_salon/features/appointments/domain/repos/appointment_repo.dart';
@@ -23,6 +25,10 @@ void setupLocator() {
   getIt.registerLazySingleton<FirestoreBarbersService>(
     () => FirestoreBarbersService(),
   );
+  getIt.registerLazySingleton<ImagePickerService>(() => ImagePickerService());
+  getIt.registerLazySingleton<FirebaseStorageService>(
+    () => FirebaseStorageService(),
+  );
 
   // datasources
   getIt.registerLazySingleton<AuthRemoteDatasource>(
@@ -30,6 +36,7 @@ void setupLocator() {
       authService: getIt(),
       usersService: getIt(),
       barbersService: getIt(),
+      storageService: getIt(),
     ),
   );
   getIt.registerLazySingleton<AppointmentRemoteDatasource>(

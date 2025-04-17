@@ -62,6 +62,12 @@ class _SignUpPageState extends State<SignUpPage> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
+            // profile image
+            TextButton(
+              onPressed:
+                  () => context.read<AuthBloc>().add(AuthSelectProfileImage()),
+              child: Text('select a profile image'),
+            ),
             // name text field
             MyTextField(
               label: 'Name',

@@ -29,3 +29,6 @@ class AuthSignUpUser extends AuthEvent {
 
 // logout
 class AuthLogout extends AuthEvent {}
+
+// select profile image
+class AuthSelectProfileImage extends AuthEvent {}

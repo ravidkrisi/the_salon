@@ -82,11 +82,21 @@ class BookAppointmentPage extends StatelessWidget {
         SizedBox(height: 25, width: double.infinity),
         ElevatedButton(
           onPressed: () {
+            final date = state.date!; // DateTime: 2025-04-12 00:00:00.000
+            final timeParts = state.time!.split(':'); // e.g. ["13", "00"]
+
+            final combinedDateTime = DateTime(
+              date.year,
+              date.month,
+              date.day,
+              int.parse(timeParts[0]), // hour
+              int.parse(timeParts[1]), // minute
+            );
             final appointment = Appointment(
               id: Uuid().v4(),
               customerId: currUser.id,
               barberId: state.barberId!,
-              date: state.date!,
+              date: combinedDateTime,
               time: state.time!,
               status: AppointmentStatus.booked,
             );

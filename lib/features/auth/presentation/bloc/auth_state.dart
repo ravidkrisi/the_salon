@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:the_salon/features/auth/domain/entities/user_entity.dart';
 
 abstract class AuthState {}
@@ -20,12 +22,14 @@ class AuthFirstTimeUser extends AuthState {
   final String name;
   final String email;
   final String phoneNumber;
+  final File? imageFile;
   final String profileImageUrl;
   AuthFirstTimeUser({
     required this.userId,
     required this.name,
     required this.email,
     required this.phoneNumber,
+    this.imageFile,
     required this.profileImageUrl,
   });
 }

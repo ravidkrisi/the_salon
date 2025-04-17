@@ -1,5 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:the_salon/core/services/image_picker_service.dart';
+import 'package:the_salon/core/utils/service_locator.dart';
 import 'package:the_salon/features/auth/domain/entities/user_entity.dart';
 
 import 'package:the_salon/features/auth/domain/repos/auth_repo.dart';
@@ -18,12 +20,39 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthCheckAuth>(_onCheckAuth);
     on<AuthLogout>(_onLogout);
     on<AuthSignUpUser>(_onSignUpUser);
+    on<AuthSelectProfileImage>(_onSelectProfileImage);
 
     // check auth when initial
     add(AuthCheckAuth());
   }
 
   // handlers
+  Future<void> _onSelectProfileImage(
+    AuthSelectProfileImage event,
+    Emitter<AuthState> emit,
+  ) async {
+    try {
+      final currState = state;
+      if (currState is AuthFirstTimeUser) {
+        // pick an image
+        final file = await getIt<ImagePickerService>().pickImage();
+
+        emit(
+          AuthFirstTimeUser(
+            userId: currState.userId,
+            name: currState.name,
+            email: currState.email,
+            phoneNumber: currState.phoneNumber,
+            profileImageUrl: currState.profileImageUrl,
+            imageFile: file,
+          ),
+        );
+      }
+    } catch (e) {
+      emit(AuthErrors(message: e.toString()));
+    }
+  }
+
   void _onSignInWithGoogle(
     AuthSignInWithGoogle event,
     Emitter<AuthState> emit,
@@ -81,26 +110,33 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void _onSignUpUser(AuthSignUpUser event, Emitter<AuthState> emit) async {
     try {
-      emit(AuthLoading());
+      final currState = state;
+      if (currState is AuthFirstTimeUser) {
+        var downloadUrl = currState.profileImageUrl;
 
-      //
-      if (event.type == UserType.barber) {}
+        final file = currState.imageFile;
+        if (file != null) {
+          downloadUrl = await repo.saveProfileImage(file, currState.userId);
+        }
+        final userEntity = UserEntity.create(
+          event.userId,
+          event.name,
+          event.email,
+          downloadUrl,
+          event.type,
+        );
 
-      final userEntity = UserEntity.create(
-        event.userId,
-        event.name,
-        event.email,
-        event.profileImageUrl,
-        event.type,
-      );
-      final user = await signUpUsecase(userEntity);
+        emit(AuthLoading());
 
-      if (user == null) {
-        emit(AuthUnauthenticated());
-        return;
+        final user = await signUpUsecase(userEntity);
+
+        if (user == null) {
+          emit(AuthUnauthenticated());
+          return;
+        }
+
+        emit(AuthAuthenticated(user: user));
       }
-
-      emit(AuthAuthenticated(user: user));
     } catch (e) {
       emit(AuthErrors(message: e.toString()));
     }
