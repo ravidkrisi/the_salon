@@ -11,16 +11,20 @@ class ProfilePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text('Profile')),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          SizedBox(width: double.infinity),
           // profile image
           CachedNetworkImage(
-            imageUrl: '',
+            imageUrl: user.profileImageUrl,
             imageBuilder: (context, imageProvider) {
-              return CircleAvatar(backgroundImage: imageProvider);
+              return CircleAvatar(backgroundImage: imageProvider, radius: 80);
             },
             errorWidget: (context, url, error) {
               return CircleAvatar(child: Icon(Icons.error));
             },
+            placeholder:
+                (context, url) => Center(child: CircularProgressIndicator()),
           ),
           // name
           Text(user.name),

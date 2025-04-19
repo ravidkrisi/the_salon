@@ -1,120 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:the_salon/features/appointments/presentation/pages/book_appointment_page.dart';
+import 'package:the_salon/features/profile/presentation/pages/profile_page.dart';
 import 'package:the_salon/features/auth/domain/entities/user_entity.dart';
 
 class HomePage extends StatefulWidget {
   final UserEntity currUser;
+
   const HomePage({super.key, required this.currUser});
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
-  // tabs
-  late final Map<String, Map<String, dynamic>> tabs;
+class _HomePageState extends State<HomePage> {
+  int _currentIndex = 0;
 
-  late final TabController _tabController;
+  late final List<Widget> _pages;
 
   @override
   void initState() {
     super.initState();
-    tabs = {
-      'home': {
-        'icon': Icon(Icons.home),
-        'page': BookAppointmentPage(currUser: widget.currUser),
-      },
-      // 'profile': {
-      //   'icon': Icon(FontAwesomeIcons.person),
-      //   'page': ProfilePage(uid: widget.currUid),
-      // },
-    };
-    _tabController = TabController(length: tabs.length, vsync: this);
-  }
 
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
+    _pages = [
+      BookAppointmentPage(currUser: widget.currUser),
+      ProfilePage(user: widget.currUser),
+    ];
   }
 
   @override
   Widget build(BuildContext context) {
-    // SCAFFOLD
     return Scaffold(
-      body:
-      // TABS VIEW
-      TabBarView(
-        controller: _tabController,
-        children:
-            tabs.entries
-                .map((entry) => (entry.value['page'] as Widget))
-                .toList(),
-      ),
-
-      // BOTTOM NAVIGATION BAR
-      bottomNavigationBar: SafeArea(
-        child: TabBar(
-          controller: _tabController,
-          dividerColor: Colors.transparent,
-          indicatorColor: Colors.transparent,
-          tabs:
-              tabs.entries
-                  .map((entry) => Tab(icon: entry.value['icon']))
-                  .toList(),
-        ),
+      body: IndexedStack(index: _currentIndex, children: _pages),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap:
+            (index) => setState(() {
+              _currentIndex = index;
+            }),
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+        ],
       ),
     );
   }
 }
-// class HomePage extends StatelessWidget {
-//   final UserEntity currUser;
-//   const HomePage({super.key, required this.currUser});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         actions: [
-//           IconButton(
-//             onPressed: () => context.read<AuthBloc>().add(AuthLogout()),
-//             icon: Icon(Icons.logout),
-//           ),
-//         ],
-//       ),
-//       body: Center(
-//         child: Column(
-//           children: [
-//             Text('home'),
-//             ElevatedButton(
-//               onPressed: () {
-//                 context.read<AppointmentBloc>().add(
-//                   AppointmentBookAppointment(
-//                     appointment: Appointment(
-//                       id: '1111',
-//                       customerId: '9999',
-//                       barberId: '00000',
-//                       date: DateTime.now(),
-//                       time: '09:00',
-//                       status: AppointmentStatus.booked,
-//                     ),
-//                   ),
-//                 );
-//               },
-//               child: Text('Add Appointment'),
-//             ),
-//             ElevatedButton(
-//               onPressed: () {
-//                 context.read<AppointmentBloc>().add(
-//                   AppointmentGetAvailableSlots(barberId: '00000'),
-//                 );
-//               },
-//               child: Text('Add Appointment'),
-//             ),
-//             BookAppointmentPage(currUser: currUser),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
