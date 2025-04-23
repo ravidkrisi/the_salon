@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:the_salon/features/appointments/presentation/components/appointment_tile.dart';
+import 'package:the_salon/features/appointments/presentation/components/appointments_list.dart';
 import 'package:the_salon/features/auth/domain/entities/user_entity.dart';
 import 'package:the_salon/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:the_salon/features/auth/presentation/bloc/auth_event.dart';
@@ -55,6 +56,9 @@ class _ProfilePageState extends State<ProfilePage>
   Widget build(BuildContext context) {
     super.build(context); // For keep-alive
 
+    // text style
+    final listTitle = TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.user.name),
@@ -89,17 +93,28 @@ class _ProfilePageState extends State<ProfilePage>
               }
 
               if (state is ProfileLoaded) {
-                return Column(
-                  children: [
-                    const Text('Upcoming Appointments'),
-                    Text(state.upcomingAppointments.length.toString()),
-                    if (state.upcomingAppointments.isNotEmpty)
-                      AppointmentTile(
-                        appointment: state.upcomingAppointments[0],
-                      ),
-                    const Text('Past Appointments'),
-                    Text(state.pastAppointments.length.toString()),
-                  ],
+                return Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // upcoming appointments
+                      Text('Upcoming Appointments', style: listTitle),
+                      SizedBox(height: 10),
+                      (state.upcomingAppointments.isNotEmpty)
+                          ? AppointmentsList(
+                            appointments: state.upcomingAppointments,
+                          )
+                          : Text('No Upcoming Appointments'),
+
+                      SizedBox(height: 20),
+
+                      // past appointments
+                      Text('Past Appointments', style: listTitle),
+                      SizedBox(height: 10),
+                      if (state.pastAppointments.isNotEmpty)
+                        AppointmentsList(appointments: state.pastAppointments),
+                    ],
+                  ),
                 );
               }
 

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import 'package:the_salon/core/extensions/buildcontext.dart';
 import 'package:the_salon/features/appointments/domain/entities/appointment.dart';
 import 'package:the_salon/features/barbers/presentation/bloc/barbers_bloc.dart';
 import 'package:the_salon/features/barbers/presentation/bloc/barbers_state.dart';
@@ -22,7 +24,34 @@ class AppointmentTile extends StatelessWidget {
           final barber = state.barbers.firstWhere(
             (barber) => barber.id == appointment.barberId,
           );
-          return Container(child: Row(children: [Text(barber.name)]));
+          return Container(
+            height: 60,
+            decoration: BoxDecoration(
+              color: Colors.grey.shade300,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  // barber name
+                  Text(
+                    'Barber: ',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  Text(barber.name, style: TextStyle(fontSize: 16)),
+
+                  Spacer(),
+
+                  // date
+                  Text(
+                    DateFormat('dd/MM/yyyy').format(appointment.date),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
+          );
         }
 
         // default

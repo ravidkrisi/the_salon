@@ -7,6 +7,7 @@ final ThemeData lightTheme = ThemeData(
     onPrimary: Colors.white, // Text/icons on primary color
     secondary: Color(0xFFFFA726), // Warm orange for accents
     onSecondary: Colors.white,
+
     surface: Colors.white, // Default container background
     onSurface: Colors.black87, // Text/icons on surfaces
     error: Color(0xFFD32F2F), // Standard error red
