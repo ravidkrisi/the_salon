@@ -17,6 +17,8 @@ abstract class AppointmentRemoteDatasource {
     Timestamp startDate,
     Timestamp endDate,
   );
+
+  // get
 }
 
 class AppointmentRemoteDatasourceImpl implements AppointmentRemoteDatasource {

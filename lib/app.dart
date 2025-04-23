@@ -5,9 +5,12 @@ import 'package:the_salon/core/utils/service_locator.dart';
 import 'package:the_salon/features/appointments/presentation/bloc/appointment_bloc.dart';
 import 'package:the_salon/features/auth/presentation/pages/auth_page.dart';
 import 'package:the_salon/features/auth/presentation/pages/sign_up_page.dart';
+import 'package:the_salon/features/barbers/presentation/bloc/barbers_bloc.dart';
+import 'package:the_salon/features/barbers/presentation/bloc/barbers_evnet.dart';
 import 'package:the_salon/features/home/presentation/pages/home_page.dart';
 import 'package:the_salon/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:the_salon/features/auth/presentation/bloc/auth_state.dart';
+import 'package:the_salon/features/profile/presentation/bloc/profile_bloc.dart';
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});
@@ -21,6 +24,12 @@ class MyApp extends StatelessWidget {
 
         // appointment bloc
         BlocProvider(create: (context) => getIt<AppointmentBloc>()),
+
+        // profile bloc
+        BlocProvider(create: (context) => getIt<ProfileBloc>()),
+
+        // barbers bloc
+        BlocProvider(create: (context) => getIt<BarbersBloc>()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -35,6 +44,8 @@ class MyApp extends StatelessWidget {
 
             // authenticated
             if (state is AuthAuthenticated) {
+              // load barbers data
+              context.read<BarbersBloc>().add(BabrbersLoadBarbers());
               return HomePage(currUser: state.user);
             }
 

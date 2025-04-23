@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:the_salon/features/appointments/domain/entities/appointment.dart';
+import 'package:the_salon/features/barbers/presentation/bloc/barbers_bloc.dart';
+import 'package:the_salon/features/barbers/presentation/bloc/barbers_state.dart';
 
 class AppointmentTile extends StatelessWidget {
   final Appointment appointment;
@@ -7,16 +10,31 @@ class AppointmentTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 55,
-      width: double.infinity,
+    return BlocConsumer<BarbersBloc, BarbersState>(
+      builder: (context, state) {
+        // loading
+        if (state is BarbersLoading) {
+          return Center(child: CircularProgressIndicator());
+        }
 
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(15)),
+        // loaded
+        if (state is BarbersLoaded) {
+          final barber = state.barbers.firstWhere(
+            (barber) => barber.id == appointment.barberId,
+          );
+          return Container(child: Row(children: [Text(barber.name)]));
+        }
 
-      child: Row(children: [
-
-        ],
-      ),
+        // default
+        return Container();
+      },
+      listener: (context, state) {
+        if (state is BarbersErrors) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
+        }
+      },
     );
   }
 }

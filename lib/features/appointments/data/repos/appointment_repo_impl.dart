@@ -75,7 +75,7 @@ class AppointmentRepoImpl implements AppointmentRepo {
     // Generate all possible time slots
     final allSlots = _generateAllSlots();
 
-    // ✅ Filter out past time slots if selected date is today
+    // Filter out past time slots if selected date is today
     List<String> filteredSlots = allSlots;
 
     final now = DateTime.now();

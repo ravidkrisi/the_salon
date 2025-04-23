@@ -5,7 +5,6 @@ import 'package:the_salon/features/auth/domain/entities/user_entity.dart';
 
 class HomePage extends StatefulWidget {
   final UserEntity currUser;
-
   const HomePage({super.key, required this.currUser});
 
   @override
@@ -15,22 +14,16 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
 
-  late final List<Widget> _pages;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _pages = [
-      BookAppointmentPage(currUser: widget.currUser),
-      ProfilePage(user: widget.currUser),
-    ];
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(index: _currentIndex, children: _pages),
+      body: IndexedStack(
+        index: _currentIndex,
+        children: [
+          BookAppointmentPage(currUser: widget.currUser),
+          ProfilePage(user: widget.currUser, tabIndex: _currentIndex),
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap:

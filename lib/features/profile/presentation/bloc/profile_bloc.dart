@@ -19,9 +19,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     final upcomingAppointments = await repo.getUserUpcomingAppointments(
       event.userId,
     );
-    final pastAppointments = await repo.getUserUpcomingAppointments(
-      event.userId,
-    );
+    final pastAppointments = await repo.getUserPastAppointments(event.userId);
 
     emit(
       ProfileLoaded(
