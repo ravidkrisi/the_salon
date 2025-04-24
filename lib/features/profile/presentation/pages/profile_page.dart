@@ -94,26 +94,41 @@ class _ProfilePageState extends State<ProfilePage>
 
               if (state is ProfileLoaded) {
                 return Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // upcoming appointments
-                      Text('Upcoming Appointments', style: listTitle),
-                      SizedBox(height: 10),
-                      (state.upcomingAppointments.isNotEmpty)
-                          ? AppointmentsList(
-                            appointments: state.upcomingAppointments,
-                          )
-                          : Text('No Upcoming Appointments'),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // upcoming appointments
+                        Text('Upcoming Appointments', style: listTitle),
+                        SizedBox(height: 10),
+                        // loading
+                        (state.isLoadingAppointments)
+                            ? Center(child: CircularProgressIndicator())
+                            // loaded
+                            : (state.upcomingAppointments.isNotEmpty)
+                            ? AppointmentsList(
+                              appointments: state.upcomingAppointments,
+                            )
+                            : Text('No Upcoming Appointments'),
 
-                      SizedBox(height: 20),
+                        SizedBox(height: 20),
 
-                      // past appointments
-                      Text('Past Appointments', style: listTitle),
-                      SizedBox(height: 10),
-                      if (state.pastAppointments.isNotEmpty)
-                        AppointmentsList(appointments: state.pastAppointments),
-                    ],
+                        // past appointments
+                        Text('Past Appointments', style: listTitle),
+                        SizedBox(height: 10),
+                        // loading
+                        (state.isLoadingAppointments)
+                            ? Center(child: CircularProgressIndicator())
+                            :
+                            // loaded
+                            (state.pastAppointments.isNotEmpty)
+                            ? AppointmentsList(
+                              appointments: state.pastAppointments,
+                            )
+                            : Text('No Upcoming Appointments'),
+                      ],
+                    ),
                   ),
                 );
               }

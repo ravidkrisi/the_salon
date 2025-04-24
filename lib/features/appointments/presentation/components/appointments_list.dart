@@ -11,10 +11,7 @@ class AppointmentsList extends StatelessWidget {
     return Expanded(
       child: ListView.separated(
         itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: AppointmentTile(appointment: appointments[index]),
-          );
+          return AppointmentTile(appointment: appointments[index]);
         },
         separatorBuilder: (context, index) => SizedBox(height: 5),
         itemCount: appointments.length,
